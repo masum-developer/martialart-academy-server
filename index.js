@@ -27,6 +27,7 @@ async function run() {
         // Connect the client to the server	(optional starting in v4.7)
         await client.connect();
         const userCollection = client.db("martialDb").collection("user");
+        const classCollection = client.db("martialDb").collection("class");
         //users related api
         app.get('/users', async (req, res) => {
             const result = await userCollection.find().toArray();
@@ -71,6 +72,15 @@ async function run() {
             console.log(result);
             res.send(result);
           })
+
+        //   class route
+        app.post('/addclass', async (req, res) => {
+            const classItem = req.body;
+            console.log(classItem);
+            
+            const result = await classCollection.insertOne(classItem);
+            res.send(result);
+        })
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
