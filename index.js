@@ -52,7 +52,7 @@ async function run() {
             res.send({token})
           })
         //users related api
-        app.get('/users',verifyJWT, async (req, res) => {
+        app.get('/users', async (req, res) => {
             const result = await userCollection.find().toArray();
             res.send(result);
         })
@@ -96,6 +96,11 @@ async function run() {
             res.send(result);
           })
 
+          app.get('/instructors',async(req,res)=>{
+            const result = await userCollection.find({role:'instructor'}).toArray();
+            res.send(result);
+          })
+
         //   class route
         app.post('/addclass', async (req, res) => {
             const classItem = req.body;
@@ -104,6 +109,52 @@ async function run() {
             const result = await classCollection.insertOne(classItem);
             res.send(result);
         })
+        app.get('/allClass', async (req,res)=>{
+          const result = await classCollection.find().toArray();
+          res.send(result);
+        })
+        app.patch('/class/approve/:id', async(req,res)=>{
+          const id = req.params.id;
+          const filter = { _id: new ObjectId(id) };
+          
+          const updateDoc = {
+            $set: {
+              status: 'approve'
+            },
+          };
+          const result = await classCollection.updateOne(filter,updateDoc);
+          console.log(result);
+          res.send(result);
+        })
+        app.patch('/class/denied/:id', async(req,res)=>{
+          const id = req.params.id;
+          const filter = { _id: new ObjectId(id) };
+          
+          const updateDoc = {
+            $set: {
+              status: 'denied'
+            },
+          };
+          const result = await classCollection.updateOne(filter,updateDoc);
+          console.log(result);
+          res.send(result);
+        })
+        app.patch('/class/feedback/:id', async (req, res) => {
+          const id = req.params.id;
+          const filter = { _id: new ObjectId(id) };
+          const updatedClass = req.body;
+          console.log(updatedClass);
+          const updateDoc = {
+            $set: {
+              
+              feedback: updatedClass.feedback,
+            },
+          };
+          const result = await classCollection.updateOne(filter, updateDoc)
+          res.send(result);
+    
+        })
+      
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
