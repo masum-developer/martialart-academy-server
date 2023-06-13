@@ -80,6 +80,12 @@ async function run() {
       const result = await userCollection.insertOne(user);
       res.send(result);
     })
+
+    app.get("/users/:email", async (req, res) => {
+      const result= await userCollection.find({email:req.params.email}).toArray();
+      res.send(result);
+    });
+
     app.get('/users/admin/:email', verifyJWT, async (req, res) => {
       const email = req.params.email;
       if (req.decoded.email !== email) {
@@ -208,6 +214,27 @@ async function run() {
       const result = await classCollection.updateOne(filter, updateDoc)
       res.send(result);
 
+    })
+      // cart related api
+      app.get('/carts', async(req,res)=>{
+        const email = req.query.email;
+        if(!email){
+          res.send([]);
+        }
+  
+        // const decodedEmail = req.decoded.email;
+        // if(email!==decodedEmail){
+        //   return res.status(403).send({error:true,message:'Forbidden access'})
+        // }
+        const query = { email: email };
+        const result = await cartCollection.find(query).toArray();
+        res.send(result);
+      })   
+    app.post('/carts', async(req,res)=>{
+      const item = req.body;
+      console.log(item);
+      const result = await cartCollection.insertOne(item);
+      res.send(result);
     })
 
     // Send a ping to confirm a successful connection
