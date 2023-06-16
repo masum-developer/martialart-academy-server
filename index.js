@@ -27,7 +27,7 @@ const verifyJWT = (req, res, next) => {
 
 
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
-// const uri = "mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.obrngag.mongodb.net/?retryWrites=true&w=majority";
+
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.obrngag.mongodb.net/?authSource=admin`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -42,7 +42,7 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+   
     const userCollection = client.db("martialDb").collection("user");
     const classCollection = client.db("martialDb").collection("class");
     const cartCollection = client.db("martialDb").collection("cart");
@@ -254,7 +254,7 @@ async function run() {
         currency:'usd',
         payment_method_types: ['card']
       });
-      res.send({
+     return res.send({
         clientSecret: paymentIntent.client_secret
       })
     })
@@ -268,7 +268,7 @@ async function run() {
       };
       
       const result = await classCollection.find(query,options).limit(6).toArray();
-      res.send(result);
+     return res.send(result);
  
     });
 
@@ -276,7 +276,7 @@ async function run() {
     app.get("/bestInstructors", async (req, res) => {
  
       const result= await userCollection.find({ role: 'instructor' }).limit(6).toArray();
-      res.send(result);
+      return res.send(result);
     });
 
     // Send a ping to confirm a successful connection
